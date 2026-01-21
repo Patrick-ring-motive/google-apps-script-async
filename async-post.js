@@ -88,6 +88,6 @@ function waitSync(promiseId) {
       throw new Error("Sync Wait Timeout");
     }
     
-    Utilities.sleep(500); // Polling interval
+    Utilities.sleep(100); // Polling interval
   }
 }
