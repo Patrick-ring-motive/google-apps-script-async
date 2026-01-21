@@ -33,24 +33,26 @@ function doPostSync(e) {
  */
 function doPostAsync(e, promiseId) {
   const cache = CacheService.getScriptCache();
-  try {
-    // YOUR ACTUAL LOGIC HERE
-    // You have access to the original body via e.postData.contents
-    const originalData = JSON.parse(e.postData.contents);
-    const processedResult = someProcessingFunction(originalData);
+  (async()=>{
+    try {
+      // YOUR ACTUAL LOGIC HERE
+      // You have access to the original body via e.postData.contents
+      const originalData = JSON.parse(e.postData.contents);
+      const processedResult = someProcessingFunction(originalData);
 
-    cache.put(promiseId, JSON.stringify(processedResult), 600);
-  } catch (err) {
-    cache.put(promiseId, JSON.stringify({error: err.message}), 600);
-  }
-  return ContentService.createTextOutput("Worker complete.");
+      cache.put(promiseId, JSON.stringify(processedResult), 600);
+    } catch (err) {
+      cache.put(promiseId, JSON.stringify({error: err.message}), 600);
+    }
+  })();
+  return ContentService.createTextOutput("Worker started.");
 }
 
 /**
  * Dispatches the internal fetch with the exact same payload
  */
 function initAsync(e) {
-  const promiseId = Utilities.getUuid();
+  const promiseId = `promise-${Utilities.getUuid()}`;
   const cache = CacheService.getScriptCache();
   cache.put(promiseId, 'pending', 600);
 
