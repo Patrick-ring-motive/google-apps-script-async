@@ -18,13 +18,15 @@ function doPost(e) {
  */
 function doPostSync(e) {
   const promiseId = initAsync(e);
-  
+
   try {
     const result = waitSync(promiseId);
     return ContentService.createTextOutput(result).setMimeType(ContentService.MimeType.JSON);
   } catch (err) {
-    return ContentService.createTextOutput(JSON.stringify({error: err.message}))
-                         .setMimeType(ContentService.MimeType.JSON);
+    return ContentService.createTextOutput(JSON.stringify({
+        error: err.message
+      }))
+      .setMimeType(ContentService.MimeType.JSON);
   }
 }
 
@@ -33,7 +35,7 @@ function doPostSync(e) {
  */
 function doPostAsync(e, promiseId) {
   const cache = CacheService.getScriptCache();
-  (async()=>{
+  (async () => {
     try {
       // YOUR ACTUAL LOGIC HERE
       // You have access to the original body via e.postData.contents
@@ -42,7 +44,9 @@ function doPostAsync(e, promiseId) {
 
       cache.put(promiseId, JSON.stringify(processedResult), 600);
     } catch (err) {
-      cache.put(promiseId, JSON.stringify({error: err.message}), 600);
+      cache.put(promiseId, JSON.stringify({
+        error: err.message
+      }), 600);
     }
   })();
   return ContentService.createTextOutput("Worker started.");
@@ -57,7 +61,7 @@ function initAsync(e) {
   cache.put(promiseId, 'pending', 600);
 
   const url = ScriptApp.getService().getUrl() + "?promiseId=" + promiseId;
-  
+
   const options = {
     method: 'post',
     contentType: 'application/json',
@@ -83,11 +87,11 @@ function waitSync(promiseId) {
       cache.remove(promiseId);
       return res;
     }
-    
+
     if (new Date().getTime() - start > timeout) {
       throw new Error("Sync Wait Timeout");
     }
-    
+
     Utilities.sleep(100); // Polling interval
   }
 }
